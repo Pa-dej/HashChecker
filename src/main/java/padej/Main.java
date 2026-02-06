@@ -38,9 +38,6 @@ public class Main {
             return;
         }
 
-        System.out.println(Utils.cyan("╔════════════════════════════════════════╗"));
-        System.out.println(Utils.cyan("║   BATCH MODE - PARALLEL PROCESSING     ║"));
-        System.out.println(Utils.cyan("╚════════════════════════════════════════╝"));
         System.out.println(Utils.cyan("Проверка модов: " + dir));
         System.out.println();
 
@@ -80,13 +77,10 @@ public class Main {
         monitor.clearLine();
 
         System.out.println();
-        System.out.println(Utils.cyan("╔════════════════════════════════════════╗"));
-        System.out.println(Utils.cyan("║              РЕЗУЛЬТАТЫ                ║"));
-        System.out.println(Utils.cyan("╚════════════════════════════════════════╝"));
-        System.out.println(Utils.green("✓ OK: " + stats.ok));
-        System.out.println(Utils.yellow("✗ NOT FOUND: " + stats.fail));
-        System.out.println(Utils.cyan("⏱ Время: " + (elapsed / 1000.0) + " сек"));
-        System.out.println(Utils.cyan("⚡ Средний TPS: " + String.format("%.2f", files.size() / (elapsed / 1000.0))));
+        System.out.println(Utils.green("OK: " + stats.ok));
+        System.out.println(Utils.yellow("NOT FOUND: " + stats.fail));
+        System.out.println(Utils.cyan("Время: " + (elapsed / 1000.0) + " сек"));
+        System.out.println(Utils.cyan("Средний TPS: " + String.format("%.2f", files.size() / (elapsed / 1000.0))));
 
         client.printLastKnownLimit();
     }

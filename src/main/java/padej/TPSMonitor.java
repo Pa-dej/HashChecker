@@ -52,7 +52,7 @@ public class TPSMonitor {
     }
 
     private void printStatus() {
-        System.out.print("\r" + Utils.cyan("⚡ TPS: " + String.format("%.2f", tps) + 
+        System.out.print("\r" + Utils.cyan("TPS: " + String.format("%.2f", tps) +
                          " | Pending: " + pending.get() + "    "));
     }
 
