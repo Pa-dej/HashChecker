@@ -4,7 +4,7 @@ public class RateLimiter {
 
     private double tokens = 5;
     private double maxTokens = 5;
-    private double refillRate = 5; // токенов в секунду
+    private double refillRate = 5;
     private long lastRefill = System.nanoTime();
 
     public synchronized void acquire() {
