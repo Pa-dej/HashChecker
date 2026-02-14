@@ -42,7 +42,7 @@ This tool catches approximately **95% of common cheat clients** by verifying fil
 ### Download JAR from Releases
 
 1. Go to the [Releases page](https://github.com/Pa-dej/HashChecker/releases)  
-2. Download the latest `.jar` file (e.g., `HashChecker-1.0.0.jar`)  
+2. Download the latest `.jar` file (e.g., `HashChecker-1.0.1.jar`)  
 3. Place it in your preferred directory
 
 ### Build from Source (Optional)
@@ -62,7 +62,7 @@ cd HashChecker
 3. The JAR file will be created at:
 
 ```
-build/libs/HashChecker-1.0.0.jar
+build/libs/HashChecker-1.0.1.jar
 ```
 
 ## 🚀 Usage
@@ -72,13 +72,13 @@ build/libs/HashChecker-1.0.0.jar
 Verify all mod files in a directory using batch API:
 
 ```bash
-java -jar HashChecker-1.0.0.jar <mods_folder>
+java -jar HashChecker-1.0.1.jar <mods_folder>
 ```
 
 Example:
 
 ```bash
-java -jar HashChecker-1.0.0.jar mods/
+java -jar HashChecker-1.0.1.jar mods/
 ```
 
 ### Single File Mode
@@ -86,7 +86,7 @@ java -jar HashChecker-1.0.0.jar mods/
 Check mods one by one (slower, for debugging):
 
 ```bash
-java -jar HashChecker-1.0.0.jar --single <mods_folder>
+java -jar HashChecker-1.0.1.jar --single <mods_folder>
 ```
 
 ### Check API Rate Limit
@@ -94,7 +94,7 @@ java -jar HashChecker-1.0.0.jar --single <mods_folder>
 View current API rate limit status:
 
 ```bash
-java -jar HashChecker-1.0.0.jar --limit
+java -jar HashChecker-1.0.1.jar --limit
 ```
 
 ## 📊 Example Output
@@ -193,6 +193,15 @@ Rate limiter automatically adjusts speed:
 * **429 error** → 0.5 requests/sec + retry
 
 ### Security Improvements
+
+**v1.0.1 Security Features:**
+- Streaming hash calculation (prevents OOM on large files)
+- Retry limit protection (max 5 retries)
+- HTTP timeout protection (30 second timeout)
+- File-level symlink validation
+- CPU usage optimization (<1% during rate limiting)
+- Hash collision handling (duplicate file support)
+- Resource leak protection (proper cleanup)
 
 **v1.0.0 Security Features:**
 - SHA-512 instead of SHA-1 (cryptographically secure)

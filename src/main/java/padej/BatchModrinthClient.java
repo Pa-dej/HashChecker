@@ -63,7 +63,7 @@ public class BatchModrinthClient {
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BATCH_API))
-                .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
+                .header("User-Agent", "Pa-dej/HashChecker/1.0.1 (github.com/Pa-dej/HashChecker2)")
                 .header("Content-Type", "application/json")
                 .timeout(java.time.Duration.ofSeconds(30))
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(body)))

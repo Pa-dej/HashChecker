@@ -44,7 +44,7 @@ public class ModrinthClient {
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(API + hash))
-                .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
+                .header("User-Agent", "Pa-dej/HashChecker/1.0.1 (github.com/Pa-dej/HashChecker2)")
                 .timeout(java.time.Duration.ofSeconds(30))
                 .GET()
                 .build();
@@ -105,7 +105,7 @@ public class ModrinthClient {
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.modrinth.com/v2/project/sodium"))
-                .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
+                .header("User-Agent", "Pa-dej/HashChecker/1.0.1 (github.com/Pa-dej/HashChecker2)")
                 .timeout(java.time.Duration.ofSeconds(30))
                 .GET()
                 .build();
