@@ -38,22 +38,29 @@ This tool catches approximately **95% of common cheat clients** by verifying fil
 ### Prerequisites
 
 - Java 11 or higher
-- Gradle (included via wrapper)
 
-### Build from Source
+### Download JAR from Releases
+
+1. Go to the [Releases page](https://github.com/Pa-dej/HashChecker/releases)  
+2. Download the latest `.jar` file (e.g., `HashChecker-1.0.0.jar`)  
+3. Place it in your preferred directory
+
+### Build from Source (Optional)
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Pa-dej/HashChecker2.git
-cd HashChecker2
-```
+git clone https://github.com/Pa-dej/HashChecker.git
+cd HashChecker
+````
 
 2. Build the project:
+
 ```bash
 ./gradlew jar
 ```
 
 3. The JAR file will be created at:
+
 ```
 build/libs/HashChecker-1.0.0.jar
 ```
@@ -69,6 +76,7 @@ java -jar HashChecker-1.0.0.jar <mods_folder>
 ```
 
 Example:
+
 ```bash
 java -jar HashChecker-1.0.0.jar mods/
 ```
@@ -92,8 +100,12 @@ java -jar HashChecker-1.0.0.jar --limit
 ## 📊 Example Output
 
 ```
+<<<<<<< HEAD
 Checking mods: C:\Users\User\mods
 Found .jar files: 10
+=======
+Checking mods: test_mods
+>>>>>>> 1b8e48d77f4d395b789af829bc8ea35269c0c725
 
 [OK] iris-fabric-1.10.5+mc1.21.11.jar
 [OK] sodium-neoforge-0.8.4+mc1.21.11.jar
@@ -103,6 +115,7 @@ Found .jar files: 10
 VERIFIED: 7
 UNKNOWN: 3
 
+<<<<<<< HEAD
 WARNING: 3 unknown/modified files detected!
 These files are NOT verified by Modrinth:
 - Private mods
@@ -111,6 +124,12 @@ These files are NOT verified by Modrinth:
 
 Time: 0.8 sec
 Average TPS: 12.50
+=======
+OK: 7
+NOT FOUND: 3
+Time: 2.5s
+Average TPS: 4.00
+>>>>>>> 1b8e48d77f4d395b789af829bc8ea35269c0c725
 
 RATE LIMIT STATUS
 API calls made: 1 | Used: 1/300 (0.3%) | Remaining: 299 | Reset in: 54s
@@ -123,6 +142,7 @@ Verification Rate: 70.0%
 
 ## 🔧 How It Works
 
+<<<<<<< HEAD
 1. **File Discovery** — scans directory for `.jar` files only
 2. **Canonical Path Check** — validates paths to prevent symlink attacks
 3. **SHA-512 Hashing** — computes cryptographic hash for each file
@@ -138,20 +158,39 @@ Verification Rate: 70.0%
 - **HTTP Client:** Java HTTP/2 client
 - **JSON Parser:** Gson 2.10.1
 - **Hash Algorithm:** SHA-512 (production-grade)
+=======
+1. **Hash Calculation** — computes SHA-1 hash for each mod file
+2. **API Request** — sends hash to Modrinth API endpoint `/v2/version_file/{hash}`
+3. **Rate Limiting** — respects Modrinth's 300 requests/minute limit
+4. **Result Display** — shows verification status with color coding:
+
+   * 🟢 **[OK]** — mod found in Modrinth database
+   * 🟡 **[NOT FOUND]** — mod not found or invalid hash
+   * 🔴 **[429 RATE LIMIT]** — rate limit exceeded, retrying
+
+## 🛠️ Technical Details
+
+* **Language:** Java 11+
+* **Build Tool:** Gradle
+* **API:** Modrinth API v2
+* **HTTP Client:** Java HTTP/2 client
+* **JSON Parser:** Gson 2.10.1
+>>>>>>> 1b8e48d77f4d395b789af829bc8ea35269c0c725
 
 ### Rate Limiting
 
 The application implements adaptive rate limiting based on Modrinth API headers:
 
-- `X-Ratelimit-Limit` — maximum requests per minute (300)
-- `X-Ratelimit-Remaining` — requests remaining in current window
-- `X-Ratelimit-Reset` — seconds until rate limit resets
+* `X-Ratelimit-Limit` — maximum requests per minute (300)
+* `X-Ratelimit-Remaining` — requests remaining in current window
+* `X-Ratelimit-Reset` — seconds until rate limit resets
 
 Rate limiter automatically adjusts speed:
-- **> 50% remaining** → 6 requests/sec
-- **20-50% remaining** → 3 requests/sec
-- **< 20% remaining** → 1.5 requests/sec
-- **429 error** → 0.5 requests/sec + retry
+
+* **> 50% remaining** → 6 requests/sec
+* **20-50% remaining** → 3 requests/sec
+* **< 20% remaining** → 1.5 requests/sec
+* **429 error** → 0.5 requests/sec + retry
 
 ### Security Improvements
 
@@ -180,8 +219,8 @@ Created by **Padej_**
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/Pa-dej/HashChecker2)
-- [Modrinth API Documentation](https://docs.modrinth.com/api/)
+* [GitHub Repository](https://github.com/Pa-dej/HashChecker)
+* [Modrinth API Documentation](https://docs.modrinth.com/api/)
 
 ## ⚠️ Disclaimer
 
@@ -189,4 +228,4 @@ This tool provides file integrity verification but cannot detect all types of ch
 
 ---
 
-*Made with ☕ by Padej_*
+*Made with 🍵 by Padej_*
