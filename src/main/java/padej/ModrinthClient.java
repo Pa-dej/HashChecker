@@ -17,6 +17,8 @@ public class ModrinthClient {
     private int lastRemaining = -1;
     private int lastResetSeconds = -1;
     private int totalApiCalls = 0;
+    
+    private static final int MAX_RETRIES = 5;
 
     public ModrinthClient(TPSMonitor monitor) {
         this.monitor = monitor;
@@ -27,14 +29,23 @@ public class ModrinthClient {
     }
 
     public boolean checkFile(Path file) throws Exception {
+        return checkFile(file, 0);
+    }
+
+    private boolean checkFile(Path file, int retryCount) throws Exception {
+
+        if (retryCount > MAX_RETRIES) {
+            throw new RuntimeException("Too many retries (429 rate limit)");
+        }
 
         limiter.acquire();
 
-        String hash = Utils.sha1(file);
+        String hash = Utils.sha512(file);
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(API + hash))
                 .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
+                .timeout(java.time.Duration.ofSeconds(30))
                 .GET()
                 .build();
 
@@ -59,9 +70,9 @@ public class ModrinthClient {
         if (resp.statusCode() == 429) {
             limiter.penalty();
             if (monitor != null) monitor.clearLine();
-            System.out.println(Utils.red("[429 RATE LIMIT] Retrying..."));
+            System.out.println(Utils.red("[429 RATE LIMIT] Retry " + (retryCount + 1) + "/" + MAX_RETRIES));
             Thread.sleep(2000);
-            return checkFile(file);
+            return checkFile(file, retryCount + 1);
         }
 
         if (monitor != null) monitor.clearLine();
@@ -95,6 +106,7 @@ public class ModrinthClient {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.modrinth.com/v2/project/sodium"))
                 .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
+                .timeout(java.time.Duration.ofSeconds(30))
                 .GET()
                 .build();
 

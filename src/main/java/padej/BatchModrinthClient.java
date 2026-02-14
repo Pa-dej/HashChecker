@@ -21,6 +21,8 @@ public class BatchModrinthClient {
     private int lastRemaining = -1;
     private int lastResetSeconds = -1;
     private int totalApiCalls = 0;
+    
+    private static final int MAX_RETRIES = 5;
 
     public BatchModrinthClient(TPSMonitor monitor) {
         this.http = HttpClient.newBuilder()
@@ -31,12 +33,20 @@ public class BatchModrinthClient {
     }
 
     public Map<String, Boolean> checkBatch(List<Path> files) throws Exception {
+        return checkBatch(files, 0);
+    }
+
+    private Map<String, Boolean> checkBatch(List<Path> files, int retryCount) throws Exception {
+        
+        if (retryCount > MAX_RETRIES) {
+            throw new RuntimeException("Too many retries (429 rate limit)");
+        }
         
         List<String> hashes = new ArrayList<>();
         Map<String, Path> hashToFile = new HashMap<>();
 
         for (Path file : files) {
-            String hash = Utils.sha1(file);
+            String hash = Utils.sha512(file);
             hashes.add(hash);
             hashToFile.put(hash, file);
         }
@@ -49,12 +59,13 @@ public class BatchModrinthClient {
             hashArray.add(hash);
         }
         body.add("hashes", hashArray);
-        body.addProperty("algorithm", "sha1");
+        body.addProperty("algorithm", "sha512");
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BATCH_API))
                 .header("User-Agent", "Pa-dej/HashChecker/1.0.0 (github.com/Pa-dej/HashChecker2)")
                 .header("Content-Type", "application/json")
+                .timeout(java.time.Duration.ofSeconds(30))
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(body)))
                 .build();
 
@@ -86,9 +97,9 @@ public class BatchModrinthClient {
         } else if (resp.statusCode() == 429) {
             limiter.penalty();
             monitor.clearLine();
-            System.out.println(Utils.red("[429 RATE LIMIT] Retrying..."));
+            System.out.println(Utils.red("[429 RATE LIMIT] Retry " + (retryCount + 1) + "/" + MAX_RETRIES));
             Thread.sleep(2000);
-            return checkBatch(files);
+            return checkBatch(files, retryCount + 1);
         } else {
             monitor.clearLine();
             System.out.println(Utils.red("[HTTP " + resp.statusCode() + "]"));

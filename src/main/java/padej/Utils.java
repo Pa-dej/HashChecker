@@ -1,5 +1,6 @@
 package padej;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -18,10 +19,29 @@ public class Utils {
     public static String yellow(String s) { return YELLOW + s + RESET; }
     public static String cyan(String s) { return CYAN + s + RESET; }
 
+    public static String sha512(Path file) throws Exception {
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-512");
+        try (InputStream is = Files.newInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
     public static String sha1(Path file) throws Exception {
 
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
-        byte[] data = Files.readAllBytes(file);
-        return HexFormat.of().formatHex(digest.digest(data));
+        try (InputStream is = Files.newInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                digest.update(buffer, 0, read);
+            }
+        }
+        return HexFormat.of().formatHex(digest.digest());
     }
 }

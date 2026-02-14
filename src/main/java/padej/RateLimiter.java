@@ -13,6 +13,12 @@ public class RateLimiter {
 
         while (tokens < 1) {
             refill();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
         }
 
         tokens -= 1;
