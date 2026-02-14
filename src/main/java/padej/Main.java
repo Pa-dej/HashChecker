@@ -3,6 +3,7 @@ package padej;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -48,18 +49,24 @@ public class Main {
         System.out.println();
 
         // Фильтруем только .jar файлы и проверяем symlinks
-        List<Path> files = Files.list(canonicalDir)
-                .filter(Files::isRegularFile)
-                .filter(p -> p.toString().toLowerCase().endsWith(".jar"))
-                .filter(p -> {
-                    try {
-                        // Защита от symlink атак - файл должен быть внутри директории
-                        return p.toRealPath().startsWith(canonicalDir);
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .collect(Collectors.toList());
+        List<Path> files;
+        try (Stream<Path> stream = Files.list(canonicalDir)) {
+            files = stream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> {
+                        String name = p.getFileName().toString().toLowerCase();
+                        return name.endsWith(".jar");
+                    })
+                    .filter(p -> {
+                        try {
+                            // Защита от symlink атак - файл должен быть внутри директории
+                            return p.toRealPath().startsWith(canonicalDir);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
 
         if (files.isEmpty()) {
             System.out.println(Utils.yellow("No .jar files found."));
@@ -138,18 +145,24 @@ public class Main {
         System.out.println(Utils.cyan("Checking mods: " + canonicalDir));
         System.out.println();
 
-        List<Path> files = Files.list(canonicalDir)
-                .filter(Files::isRegularFile)
-                .filter(p -> p.toString().toLowerCase().endsWith(".jar"))
-                .filter(p -> {
-                    try {
-                        // Защита от symlink атак - файл должен быть внутри директории
-                        return p.toRealPath().startsWith(canonicalDir);
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .collect(Collectors.toList());
+        List<Path> files;
+        try (Stream<Path> stream = Files.list(canonicalDir)) {
+            files = stream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> {
+                        String name = p.getFileName().toString().toLowerCase();
+                        return name.endsWith(".jar");
+                    })
+                    .filter(p -> {
+                        try {
+                            // Защита от symlink атак - файл должен быть внутри директории
+                            return p.toRealPath().startsWith(canonicalDir);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
 
         if (files.isEmpty()) {
             System.out.println(Utils.yellow("No .jar files found."));

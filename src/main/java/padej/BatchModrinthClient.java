@@ -43,12 +43,12 @@ public class BatchModrinthClient {
         }
         
         List<String> hashes = new ArrayList<>();
-        Map<String, Path> hashToFile = new HashMap<>();
+        Map<String, List<Path>> hashToFiles = new HashMap<>();
 
         for (Path file : files) {
             String hash = Utils.sha512(file);
             hashes.add(hash);
-            hashToFile.put(hash, file);
+            hashToFiles.computeIfAbsent(hash, k -> new ArrayList<>()).add(file);
         }
 
         limiter.acquire();
@@ -79,20 +79,23 @@ public class BatchModrinthClient {
         if (resp.statusCode() == 200) {
             JsonObject response = gson.fromJson(resp.body(), JsonObject.class);
             
-            for (String hash : hashes) {
-                Path file = hashToFile.get(hash);
+            for (String hash : hashToFiles.keySet()) {
                 boolean found = response.has(hash);
-                results.put(file.toString(), found);
                 
-                if (found) {
-                    monitor.clearLine();
-                    System.out.println(Utils.green("[OK] ") + file.getFileName());
-                } else {
-                    monitor.clearLine();
-                    System.out.println(Utils.yellow("[NOT FOUND] ") + file.getFileName());
+                // Handle all files with the same hash
+                for (Path file : hashToFiles.get(hash)) {
+                    results.put(file.toString(), found);
+                    
+                    if (found) {
+                        monitor.clearLine();
+                        System.out.println(Utils.green("[OK] ") + file.getFileName());
+                    } else {
+                        monitor.clearLine();
+                        System.out.println(Utils.yellow("[NOT FOUND] ") + file.getFileName());
+                    }
+                    
+                    monitor.incrementCompleted();
                 }
-                
-                monitor.incrementCompleted();
             }
         } else if (resp.statusCode() == 429) {
             limiter.penalty();
